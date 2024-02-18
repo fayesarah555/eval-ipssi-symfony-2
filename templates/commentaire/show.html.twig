@@ -11,18 +11,28 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Title</th>
+                <th>Contenu</th>
+                <th>Date de Parution</th>
+                <th>Etat</th>
+                <th>Auteur</th>
+                <th>Article</th>
                 <!-- Add other properties as needed -->
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>{{ commentaire.id }}</td>
-                <td>{{ commentaire.titre }}</td>
+                <td>{{ commentaire.contenu }}</td>
+                {# <td>{{ commentaire.date_de_parution ? commentaire.date_de_parution|date('Y-m-d H:i:s') : '' }}</td> #}
+                <td>{{ commentaire.etat }}</td>
+                <td>{{ commentaire.auteur ? commentaire.auteur.nom : '' }}</td>
+                <td>{{ commentaire.article ? commentaire.article.titre : '' }}</td>
                 <!-- Display other properties as needed -->
             </tr>
         </tbody>
     </table>
+
+
 
     <a href="{{ path('app_commentaire_index') }}">Back to list</a>
 {% endblock %}

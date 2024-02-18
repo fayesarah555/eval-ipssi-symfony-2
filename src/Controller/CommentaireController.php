@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Article;
@@ -10,9 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-// use Symfony\Component\Security\Core\Security\Security;
 use Symfony\Component\Security\Core\Security;
-
 class CommentaireController extends AbstractController
 {
     private $entityManager;
@@ -21,57 +20,59 @@ class CommentaireController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
+
     #[Route('/commentaire', name: 'app_commentaire_index', methods: ['GET'])]
     public function index(CommentaireRepository $commentaireRepository): Response
     {
+        $commentaires = $commentaireRepository->findAll();
         return $this->render('commentaire/index.html.twig', [
-            'commentaires' => $commentaireRepository->findAll(),
+            // 'commentaires' => $commentaireRepository->findAll(),
+            'commentaires' => $commentaires,
         ]);
     }
+
     #[Route('/commentaire/new/{articleId}', name: 'app_commentaire_new_for_article', methods: ['GET', 'POST'])]
-    public function newForArticle(Request $request, Security $security, $articleId): Response
+    public function newForArticle(Request $request, Security $security, EntityManagerInterface $entityManager, $articleId): Response
     {
         $article = $this->entityManager->getRepository(Article::class)->find($articleId);
-    
+
         if (!$article) {
             throw $this->createNotFoundException('Article not found');
         }
-    
+
         $commentaire = new Commentaire();
         $commentaire->setArticle($article);
         $commentaire->setAuteur($security->getUser());
-    
+
         $form = $this->createForm(CommentaireType::class, $commentaire);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($commentaire);
-            $this->entityManager->flush();
-    
+            $entityManager->persist($commentaire);
+            $entityManager->flush();
+
             return $this->redirectToRoute('app_commentaire_index', [], Response::HTTP_SEE_OTHER);
         }
-    
+
         return $this->render('commentaire/new.html.twig', [
             'commentaire' => $commentaire,
             'form' => $form->createView(),
         ]);
     }
-    
+
     #[Route('/commentaire/{id}', name: 'app_commentaire_show', methods: ['GET'])]
     public function show($id, CommentaireRepository $commentaireRepository): Response
     {
         $commentaire = $commentaireRepository->find($id);
-    
+
         if (!$commentaire) {
             throw $this->createNotFoundException('Commentaire not found');
         }
-    
+
         return $this->render('commentaire/show.html.twig', [
             'commentaire' => $commentaire,
         ]);
     }
-    
-    
 
     #[Route('/commentaire/{id}/edit', name: 'app_commentaire_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
