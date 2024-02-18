@@ -9,20 +9,24 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/article')]
 class ArticleController extends AbstractController
 {
-    
     #[Route('/', name: 'app_article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(ArticleRepository $articleRepository, EntityManagerInterface $entityManager): Response
     {
+        $articles = $articleRepository->findAll();
+        
+        // Create a dummy form (replace with your actual form creation logic if needed)
+        $form = $this->createFormBuilder()->getForm();
+
         return $this->render('article/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
+            'articles' => $articles,
+            'form' => $form->createView(), // Pass the form to the template
         ]);
     }
-
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -39,15 +43,7 @@ class ArticleController extends AbstractController
 
         return $this->render('article/new.html.twig', [
             'article' => $article,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_article_show', methods: ['GET'])]
-    public function show(Article $article): Response
-    {
-        return $this->render('article/show.html.twig', [
-            'article' => $article,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -60,23 +56,39 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_article_show', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('article/edit.html.twig', [
             'article' => $article,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
-
-    #[Route('/{id}', name: 'app_article_delete', methods: ['POST'])]
-    public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($article);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
+    #[Route('/{id}/delete', name: 'app_article_delete', methods: ['POST'])]
+public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
+{
+    if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
+        $entityManager->remove($article);
+        $entityManager->flush();
     }
+
+    return $this->redirectToRoute('app_article_index');
+}
+#[Route('/{id}', name: 'app_article_detail', methods: ['GET'])]
+public function show(ArticleRepository $articleRepository, Article $article): Response
+{
+    $articles = $articleRepository->findAll();
+
+    // Create a dummy form (replace with your actual form creation logic if needed)
+    $form = $this->createFormBuilder()->getForm();
+
+    return $this->render('article/detail.html.twig', [
+        'article' => $article,
+        'articles' => $articles,
+        'form' => $form->createView(),
+    ]);
+}
+
+
+
 }

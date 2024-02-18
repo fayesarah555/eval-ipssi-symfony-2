@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
@@ -12,9 +13,12 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
+        // Check if the user is already authenticated
         // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
+        //     return $this->redirectToRoute('app_article_index');
         // }
+
+        // Your login logic...
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -25,8 +29,11 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
+    public function logout(AuthenticationUtils $authenticationUtils): RedirectResponse
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        // Your logout logic...
+
+        // Redirect to the app_article_new route
+        return $this->redirectToRoute('app_article_new');
     }
 }

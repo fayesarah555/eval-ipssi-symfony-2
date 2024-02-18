@@ -1,15 +1,13 @@
 <?php
 
-// Article entity
-
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
+
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[Broadcast]
 class Article
@@ -27,12 +25,9 @@ class Article
 
     #[ORM\Column]
     private ?\DateTimeImmutable $date_de_creation = null;
-    
+
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $etat = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $auteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     private ?Categorie $categorie = null;
@@ -40,11 +35,14 @@ class Article
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'article')]
     private Collection $commentaires;
 
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    private ?Utilisateur $auteur = null;
+
     public function __construct()
     {
         $this->commentaires = new ArrayCollection();
         $this->date_de_creation = new \DateTimeImmutable();
-        $this->etat = true; 
+        $this->etat = true;
     }
 
     public function getId(): ?int
@@ -93,12 +91,12 @@ class Article
         return $this;
     }
 
-    public function getAuteur(): ?string
+    public function getAuteur(): ?Utilisateur
     {
         return $this->auteur;
     }
 
-    public function setAuteur(string $auteur): static
+    public function setAuteur(?Utilisateur $auteur): static
     {
         $this->auteur = $auteur;
 
