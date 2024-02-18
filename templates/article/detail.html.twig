@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article Detail{% endblock %}
+
+{% block body %}
+    <h1>Article Detail</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Contenu</th>
+                <th>Date de création</th>
+                <th>État</th>
+                <th>Auteur</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.titre }}</td>
+                <td>{{ article.contenu }}</td>
+                <td>{{ article.dateDeCreation ? article.dateDeCreation|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ article.etat ? article.etat|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ article.auteur.nom }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if article.commentaires is not empty %}
+        <h2>Comments</h2>
+        <ul>
+            {% for commentaire in article.commentaires %}
+                <li>{{ commentaire.contenu }} - {{ commentaire.dateCreation ? commentaire.dateCreation|date('Y-m-d H:i:s') : '' }}</li>
+                <!-- Add other information about the comment as needed -->
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No comments for this article.</p>
+    {% endif %}
+
+    <a href="{{ path('app_commentaire_new_for_article', {'articleId': article.id}) }}">Add Comment</a>
+{% endblock %}

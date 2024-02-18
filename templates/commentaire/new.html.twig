@@ -1,11 +1,20 @@
+{# commentaire/new.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}New Commentaire{% endblock %}
+{% block title %}New Comment{% endblock %}
 
 {% block body %}
-    <h1>Create new Commentaire</h1>
+    <h1>New Comment</h1>
 
-    {{ include('commentaire/_form.html.twig') }}
+    {{ form_start(form) }}
+    {{ form_row(form.contenu) }}
+    {# Add other form fields as needed #}
 
-    <a href="{{ path('app_commentaire_index') }}">back to list</a>
+    <input type="hidden" name="article" value="{{ commentaire.article.id }}">
+
+    <button type="submit">Create Comment</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_commentaire_index') }}">Back to Comment List</a>
 {% endblock %}

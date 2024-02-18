@@ -29,8 +29,15 @@ class Commentaire
     private ?Utilisateur $auteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
-    private ?article $article = null;
+    private ?Article $article = null;
 
+    #[ORM\PrePersist]
+    public function setDefaultDateDeParution(): void
+    {
+        if ($this->date_de_parution === null) {
+            $this->date_de_parution = new \DateTime();
+        }
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -84,15 +91,16 @@ class Commentaire
         return $this;
     }
 
-    public function getArticle(): ?article
-    {
-        return $this->article;
-    }
+    public function getArticle(): ?Article
+{
+    return $this->article;
+}
 
-    public function setArticle(?article $article): static
-    {
-        $this->article = $article;
+public function setArticle(?Article $article): static
+{
+    $this->article = $article;
 
-        return $this;
-    }
+    return $this;
+}
+
 }

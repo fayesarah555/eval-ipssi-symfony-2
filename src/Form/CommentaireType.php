@@ -1,8 +1,7 @@
 <?php
-
 namespace App\Form;
 
-use App\Entity\article;
+use App\Entity\Article;
 use App\Entity\Commentaire;
 use App\Entity\Utilisateur;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -16,15 +15,16 @@ class CommentaireType extends AbstractType
     {
         $builder
             ->add('contenu')
-            ->add('date_de_parution')
-            ->add('etat')
-            ->add('auteur', EntityType::class, [
-                'class' => Utilisateur::class,
-'choice_label' => 'id',
-            ])
+            // Uncomment these lines if you want to include these fields
+            // ->add('date_de_parution')
+            // ->add('etat')
+            // ->add('auteur', EntityType::class, [
+            //     'class' => Utilisateur::class,
+            //     'choice_label' => 'nom', 
+            // ])
             ->add('article', EntityType::class, [
-                'class' => article::class,
-'choice_label' => 'id',
+                'class' => Article::class,
+                'choice_label' => 'titre',
             ])
         ;
     }

@@ -1,4 +1,5 @@
 <?php
+// Utilisateur.php
 
 namespace App\Entity;
 
@@ -24,6 +25,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private array $roles = [];
+
+    #[ORM\Column(nullable: true)]
+    private ?string $nom = null;
 
     /**
      * @var string The hashed password
@@ -52,6 +56,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(?string $nom): static
+    {
+        $this->nom = $nom;
 
         return $this;
     }
